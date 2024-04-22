@@ -1,0 +1,177 @@
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import Qt
+from gpiozero import PWMLED
+import sys
+
+ledRed = PWMLED(17)
+ledGreen = PWMLED(27)
+ledBlue = PWMLED(22)
+ledRedOn = False
+ledBlueOn = False
+ledGreenOn = False
+
+class MyWindow(QMainWindow):    
+    def __init__(self):
+        super(MyWindow, self).__init__()
+        self.setGeometry(200, 200, 300, 300)
+        self.setWindowTitle("SIT210 Task 5.2C")
+        self.initUI()
+    
+    def initUI(self):
+        # TOP LABELS
+        self.label1 = QtWidgets.QLabel(self)
+        self.label1.setText("Select a button to toggle the LED")
+        self.label1.move(10, 20)
+        self.label2 = QtWidgets.QLabel(self)
+        self.label2.setText("Use the slider to adjust the brightness")
+        self.label2.move(10, 40)
+        
+        # STATUS LABELS INITIAL
+        self.statusRed = QtWidgets.QLabel(self)
+        self.statusRed.setText("RED LED status:     Off")
+        self.statusRed.move(10, 170)
+        self.statusGreen = QtWidgets.QLabel(self)
+        self.statusGreen.setText("GREEN LED status: Off")
+        self.statusGreen.move(10, 190)
+        self.statusBlue = QtWidgets.QLabel(self)
+        self.statusBlue.setText("BLUE LED status:    Off")
+        self.statusBlue.move(10, 210)
+            
+        # RED LED BUTTON/SLIDER
+        self.buttonRed = QtWidgets.QPushButton(self)
+        self.buttonRed.setText("RED On/Off")
+        self.buttonRed.clicked.connect(self.clickedRed)
+        self.buttonRed.move(0, 70)
+        
+        self.sliderRed = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
+        self.sliderRed.setMinimum(0)
+        self.sliderRed.setMaximum(10)
+        self.sliderRed.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.sliderRed.setTickInterval(1)
+        self.sliderRed.valueChanged.connect(self.slidRed)
+        self.sliderRed.move(0, 100)
+        
+        # GREEN LED BUTTON/SLIDER
+        self.buttonGreen = QtWidgets.QPushButton(self)
+        self.buttonGreen.setText("GREEN On/Off")
+        self.buttonGreen.clicked.connect(self.clickedGreen)
+        self.buttonGreen.move(100, 70)
+        
+        self.sliderGreen = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
+        self.sliderGreen.setMinimum(0)
+        self.sliderGreen.setMaximum(10)
+        self.sliderGreen.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.sliderGreen.setTickInterval(1)
+        self.sliderGreen.valueChanged.connect(self.slidGreen)
+        self.sliderGreen.move(100, 100)
+        
+        # BLUE LED BUTTON/SLIDER
+        self.buttonBlue = QtWidgets.QPushButton(self)
+        self.buttonBlue.setText("BLUE On/Off")
+        self.buttonBlue.clicked.connect(self.clickedBlue)
+        self.buttonBlue.move(200, 70)
+        
+        self.sliderBlue = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
+        self.sliderBlue.setMinimum(0)
+        self.sliderBlue.setMaximum(10)
+        self.sliderBlue.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.sliderBlue.setTickInterval(1)
+        self.sliderBlue.valueChanged.connect(self.slidBlue)
+        self.sliderBlue.move(200, 100)
+        
+        # EXIT BUTTON
+        self.buttonExit = QtWidgets.QPushButton(self)
+        self.buttonExit.setText("Click to exit")
+        self.buttonExit.clicked.connect(self.close)
+        self.buttonExit.move(100, 250)
+        
+        self.update()       
+
+    # RED BUTTON PRESSED
+    def clickedRed(self):  
+        global ledRedOn          
+        if not ledRedOn:
+            ledRed.value = self.sliderRed.value()/10    
+            print("Red LED: On (Brightness: " + str(ledRed.value * 100) + "%)")
+            self.statusRed.setText("RED LED status:     On (Brightness: " + str(ledRed.value * 100) + "%)")
+            ledRedOn = True
+        elif ledRedOn:
+            ledRed.off()    
+            print("Red LED: Off")
+            self.statusRed.setText("RED LED status:     Off")
+            ledRedOn = False
+        self.update()
+        
+    # RED SLIDER ADJUSTED
+    def slidRed(self):
+        global ledRedOn
+        if ledRedOn:
+            ledRed.value = self.sliderRed.value()/10
+            self.statusRed.setText("RED LED status:     On (Brightness: " + str(ledRed.value * 100) + "%)")
+            print("Red LED: On (Brightness: " + str(ledRed.value * 100) + "%)")
+            self.update()
+    
+    # GREEN BUTTON PRESSED
+    def clickedGreen(self):  
+        global ledGreenOn          
+        if not ledGreenOn:
+            ledGreen.value = self.sliderGreen.value()/10    
+            print("Green LED: On (Brightness: " + str(ledGreen.value * 100) + "%)")
+            self.statusGreen.setText("GREEN LED status: On (Brightness: " + str(ledGreen.value * 100) + "%)")
+            ledGreenOn = True
+        elif ledGreenOn:
+            ledGreen.off()    
+            print("GREEN LED: Off")
+            self.statusGreen.setText("GREEN LED status: Off")
+            ledGreenOn = False
+        self.update()
+        
+    # GREEN SLIDER ADJUSTED
+    def slidGreen(self):
+        global ledGreenOn
+        if ledGreenOn:
+            ledGreen.value = self.sliderGreen.value()/10
+            self.statusGreen.setText("GREEN LED status: On (Brightness: " + str(ledGreen.value * 100) + "%)")
+            print("Green LED: On (Brightness: " + str(ledGreen.value * 100) + "%)")
+            self.update()
+        
+    # BLUE BUTTON PRESSED
+    def clickedBlue(self):  
+        global ledBlueOn          
+        if not ledBlueOn:
+            ledBlue.value = self.sliderBlue.value()/10    
+            print("Blue LED: On (Brightness: " + str(ledBlue.value * 100) + "%)")
+            self.statusBlue.setText("BLUE LED status:    On (Brightness: " + str(ledBlue.value * 100) + "%)")
+            ledBlueOn = True
+        elif ledBlueOn:
+            ledBlue.off()    
+            print("BLUE LED: Off")
+            self.statusBlue.setText("BLUE LED status:    Off")
+            ledBlueOn = False
+        self.update()
+        
+    # BLUE SLIDER ADJUSTED
+    def slidBlue(self):
+        global ledBlueOn
+        if ledBlueOn:
+            ledBlue.value = self.sliderBlue.value()/10
+            self.statusBlue.setText("BLUE LED status:    On (Brightness: " + str(ledBlue.value * 100) + "%)")
+            print("Blue LED: On (Brightness: " + str(ledBlue.value * 100) + "%)")
+            self.update()
+        
+    # UPDATE LABELS
+    def update(self):
+        self.label1.adjustSize()
+        self.label2.adjustSize()
+        self.statusRed.adjustSize()
+        self.statusGreen.adjustSize()
+        self.statusBlue.adjustSize()
+            
+def window():
+    app = QApplication (sys.argv)
+    win = MyWindow()
+    win.show()
+    sys.exit(app.exec())
+
+window()
